@@ -1,0 +1,25 @@
+# fly.toml app configuration file generated for impostor-server-dark-paper-5008 on 2024-06-18T19:17:31+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'impostor-server'
+primary_region = 'cdg'
+
+[build]
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+[env]
+  NODE_ENV = "production"
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
