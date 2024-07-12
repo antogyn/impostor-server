@@ -93,7 +93,6 @@ export type Room = {
 export type Player = {
   __typename?: "Player";
   name: Scalars["String"];
-  friends?: Maybe<Array<Maybe<Player>>>;
 };
 
 export type RoleInfo = ImpostorInfo | RegularInfo;
@@ -106,6 +105,7 @@ export type ImpostorInfo = {
 export type RegularInfo = {
   __typename?: "RegularInfo";
   word: Scalars["String"];
+  isFirstPlayer: Scalars["Boolean"];
 };
 
 export const Language = {
@@ -336,11 +336,6 @@ export type PlayerResolvers<
     ResolversParentTypes["Player"] = ResolversParentTypes["Player"],
 > = {
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  friends?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes["Player"]>>>,
-    ParentType,
-    ContextType
-  >;
   isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -371,6 +366,7 @@ export type RegularInfoResolvers<
     ResolversParentTypes["RegularInfo"] = ResolversParentTypes["RegularInfo"],
 > = {
   word?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  isFirstPlayer?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -415,7 +411,6 @@ export interface Loaders<
 
   Player?: {
     name?: LoaderResolver<Scalars["String"], Player, {}, TContext>;
-    friends?: LoaderResolver<Maybe<Array<Maybe<Player>>>, Player, {}, TContext>;
   };
 
   ImpostorInfo?: {
@@ -429,6 +424,12 @@ export interface Loaders<
 
   RegularInfo?: {
     word?: LoaderResolver<Scalars["String"], RegularInfo, {}, TContext>;
+    isFirstPlayer?: LoaderResolver<
+      Scalars["Boolean"],
+      RegularInfo,
+      {},
+      TContext
+    >;
   };
 }
 declare module "mercurius" {

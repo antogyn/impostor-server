@@ -4,11 +4,21 @@ import { getRandomInt } from "../utils";
 
 export type PlayerRole =
   | { role: "Impostor"; playerName: string }
-  | { role: "Regular"; playerName: string; word: string };
+  | {
+      role: "Regular";
+      playerName: string;
+      word: string;
+      isFirstPlayer: boolean;
+    };
 
 export function startGame(roomId: number): PlayerRole[] {
   const room = findRoomById(roomId);
   const impostorIndex = getRandomInt(0, room.players.length - 1);
+  const randomIndexWithoutLast = getRandomInt(0, room.players.length - 2);
+  const firstPlayerIndex =
+    randomIndexWithoutLast < impostorIndex
+      ? randomIndexWithoutLast
+      : randomIndexWithoutLast + 1;
   const word = getRandomWord(room.language);
   return room.players.map(({ name }, index) => {
     if (index === impostorIndex) {
@@ -17,9 +27,11 @@ export function startGame(roomId: number): PlayerRole[] {
         playerName: name,
       };
     }
+
     return {
       role: "Regular",
       playerName: name,
+      isFirstPlayer: index === firstPlayerIndex,
       word,
     };
   });

@@ -16,38 +16,38 @@ export function registerResolvers(server: FastifyInstance) {
       type Query {
         room(id: Int!): Room
       }
-  
+
       type Mutation {
         createRoom(playerName: String!, language: Language!): Room
         joinRoom(roomId: Int!, playerName: String!): Room
         leaveRoom(roomId: Int!, playerName: String!): Room
         startGame(roomId: Int!): Boolean
       }
-  
+
       type Subscription {
         roomUpdated(roomId: Int!): Room
         gameStarted(roomId: Int!, playerName: String!): RoleInfo
       }
-  
+
       type Room {
         id: Int!
         language: Language!
         players: [Player!]!
       }
-  
+
       type Player {
         name: String!
-        friends: [Player]
       }
-  
+
       union RoleInfo = ImpostorInfo | RegularInfo
-  
+
       type ImpostorInfo {
         dummy: String
       }
-  
+
       type RegularInfo {
         word: String!
+        isFirstPlayer: Boolean!
       }
 
       enum Language {
@@ -107,6 +107,7 @@ export function registerResolvers(server: FastifyInstance) {
                     : {
                         __typename: "RegularInfo",
                         word: playerRole.word,
+                        isFirstPlayer: playerRole.isFirstPlayer,
                       },
               },
             });
@@ -123,7 +124,9 @@ export function registerResolvers(server: FastifyInstance) {
         },
         gameStarted: {
           async subscribe(_, { roomId, playerName }, { pubsub }) {
-            return await pubsub.subscribe(`gameStarted:${roomId}:${playerName}`);
+            return await pubsub.subscribe(
+              `gameStarted:${roomId}:${playerName}`
+            );
           },
         },
       },
